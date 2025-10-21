@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord SRT Bot Dashboard - Redirecting...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 50px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 20px;
+        }
+
+        .logo {
+            font-size: 72px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .status {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .manual-link {
+            margin-top: 30px;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .manual-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .error {
+            display: none;
+            background: rgba(255, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .url-display {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .copy-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .copied {
+            background: rgba(76, 175, 80, 0.5) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🤖</div>
+        <h1>Discord SRT Bot</h1>
+        <div class="status" id="status">대시보드로 연결 중...</div>
+        <div class="loader" id="loader"></div>
+
+        <div id="url-info" style="display: none;">
+            <div class="url-display" id="url-display"></div>
+            <button class="copy-btn" id="copy-btn" onclick="copyURL()">URL 복사</button>
+        </div>
+
+        <div class="error" id="error">
+            <h3>연결 실패</h3>
+            <p>URL을 가져올 수 없습니다. 잠시 후 다시 시도해주세요.</p>
+        </div>
+
+        <a href="#" class="manual-link" id="manual-link" style="display: none;">
+            수동으로 이동하기
+        </a>
+    </div>
+
+    <script>
+        // GitHub Gist 또는 Repository에서 URL 정보 가져오기
+        const CONFIG_URL = 'https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/tunnel-config.json';
+
+        // 로컬 테스트용 (실제로는 위 URL 사용)
+        const FALLBACK_CONFIG = {
+            "dashboard_url": "https://95lxbslx-5000.asse.devtunnels.ms",
+            "vscode_url": "https://vscode.dev/tunnel/asuszen-minsu",
+            "last_updated": "2025-10-21T07:00:00Z"
+        };
+
+        async function fetchConfig() {
+            try {
+                // GitHub에서 설정 가져오기
+                const response = await fetch(CONFIG_URL);
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (error) {
+                console.error('Failed to fetch config:', error);
+            }
+            // Fallback 설정 사용
+            return FALLBACK_CONFIG;
+        }
+
+        async function redirect() {
+            const statusEl = document.getElementById('status');
+            const errorEl = document.getElementById('error');
+            const loaderEl = document.getElementById('loader');
+            const manualLinkEl = document.getElementById('manual-link');
+            const urlInfoEl = document.getElementById('url-info');
+            const urlDisplayEl = document.getElementById('url-display');
+
+            try {
+                statusEl.textContent = 'URL 정보를 가져오는 중...';
+
+                const config = await fetchConfig();
+
+                if (config.dashboard_url) {
+                    statusEl.textContent = '대시보드로 이동합니다...';
+                    urlDisplayEl.textContent = config.dashboard_url;
+                    urlInfoEl.style.display = 'block';
+
+                    // 최종 업데이트 시간 표시
+                    if (config.last_updated) {
+                        const date = new Date(config.last_updated);
+                        const timeAgo = getTimeAgo(date);
+                        statusEl.innerHTML = `대시보드로 이동합니다...<br><small>마지막 업데이트: ${timeAgo}</small>`;
+                    }
+
+                    manualLinkEl.href = config.dashboard_url;
+                    manualLinkEl.style.display = 'inline-block';
+
+                    // 3초 후 자동 리다이렉트
+                    setTimeout(() => {
+                        window.location.href = config.dashboard_url;
+                    }, 3000);
+                } else {
+                    throw new Error('No URL found');
+                }
+            } catch (error) {
+                console.error('Redirect failed:', error);
+                statusEl.textContent = '연결 실패';
+                errorEl.style.display = 'block';
+                loaderEl.style.display = 'none';
+            }
+        }
+
+        function copyURL() {
+            const urlDisplayEl = document.getElementById('url-display');
+            const copyBtn = document.getElementById('copy-btn');
+
+            navigator.clipboard.writeText(urlDisplayEl.textContent).then(() => {
+                copyBtn.textContent = '복사됨!';
+                copyBtn.classList.add('copied');
+
+                setTimeout(() => {
+                    copyBtn.textContent = 'URL 복사';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            const intervals = [
+                { label: '년', seconds: 31536000 },
+                { label: '개월', seconds: 2592000 },
+                { label: '일', seconds: 86400 },
+                { label: '시간', seconds: 3600 },
+                { label: '분', seconds: 60 },
+                { label: '초', seconds: 1 }
+            ];
+
+            for (const interval of intervals) {
+                const count = Math.floor(seconds / interval.seconds);
+                if (count > 0) {
+                    return `${count}${interval.label} 전`;
+                }
+            }
+            return '방금 전';
+        }
+
+        // 페이지 로드 시 리다이렉트 시작
+        window.addEventListener('load', redirect);
+    </script>
+</body>
+</html>
