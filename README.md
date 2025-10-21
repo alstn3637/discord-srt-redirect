@@ -4,7 +4,7 @@
 
 ## 🌐 고정 접속 URL
 ```
-https://[YOUR_USERNAME].github.io/discord-srt-redirect/
+https://alstn3637.github.io/discord-srt-redirect/
 ```
 
 ## 📋 기능
@@ -42,4 +42,5 @@ URL이 변경되면:
 4. GitHub Pages가 자동으로 업데이트
 
 ---
+
 Generated with [VS Code Tunnel Auto-Redirect](https://github.com/YOUR_USERNAME/discord-srt-redirect)
