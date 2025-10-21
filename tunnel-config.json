@@ -1,7 +1,7 @@
 {
-    "dashboard_url": "https://95lxbslx-5000.asse.devtunnels.ms",
+    "dashboard_url": ""https://h1dkf9hg-5000.asse.devtunnels.ms",
     "vscode_url": "https://vscode.dev/tunnel/asuszen-minsu",
-    "websocket_url": "wss://95lxbslx-8765.asse.devtunnels.ms",
+    "websocket_url": "wss://h1dkf9hg-8765.asse.devtunnels.ms",
     "last_updated": "2025-10-21T07:00:00Z",
     "tunnel_name": "asuszen-minsu",
     "services": {
@@ -9,4 +9,5 @@
         "flask_dashboard": true,
         "websocket_server": true
     }
+
 }
