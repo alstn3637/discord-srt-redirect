@@ -147,12 +147,12 @@
     </div>
 
     <script>
-        // GitHub Gist 또는 Repository에서 URL 정보 가져오기
-        const CONFIG_URL = 'https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/tunnel-config.json';
+        // GitHub Repository에서 URL 정보 가져오기
+        const CONFIG_URL = 'https://raw.githubusercontent.com/alstn3637/discord-srt-redirect/main/tunnel-config.json';
 
-        // 로컬 테스트용 (실제로는 위 URL 사용)
+        // Fallback 설정 (GitHub에서 가져오지 못할 경우)
         const FALLBACK_CONFIG = {
-            "dashboard_url": "https://95lxbslx-5000.asse.devtunnels.ms",
+            "dashboard_url": "https://h1dkf9hg-5000.asse.devtunnels.ms/",
             "vscode_url": "https://vscode.dev/tunnel/asuszen-minsu",
             "last_updated": "2025-10-21T07:00:00Z"
         };
