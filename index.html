@@ -198,11 +198,8 @@
 
                     manualLinkEl.href = config.dashboard_url;
                     manualLinkEl.style.display = 'inline-block';
-
-                    // 3초 후 자동 리다이렉트
-                    setTimeout(() => {
-                        window.location.href = config.dashboard_url;
-                    }, 3000);
+                  
+                    window.location.href = config.dashboard_url;
                 } else {
                     throw new Error('No URL found');
                 }
@@ -254,4 +251,5 @@
     </script>
 </body>
 </html>
+
 
